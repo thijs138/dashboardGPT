@@ -5,63 +5,109 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard raamdecoratie.com — Q1+April 2026</title>
 
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
 <style>
-/* (originele CSS behouden) */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"DM Sans",sans-serif;background:#F9F7F4;color:#2D2D2D;font-size:14px}
-.hdr{background:#2D2D2D;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px}
-.brand{font-family:"DM Mono",monospace;font-size:16px;font-weight:500;color:#F59901}
-.page{display:none;padding:24px}
+body{font-family:"DM Sans",sans-serif;background:#F9F7F4;margin:0;color:#2D2D2D}
+.hdr{background:#2D2D2D;color:#F59901;padding:16px;font-weight:600}
+.tab-bar{display:flex;background:#fff;border-bottom:1px solid #eee}
+.tab{padding:12px 16px;cursor:pointer;border:none;background:none}
+.tab.active{color:#F59901;border-bottom:2px solid #F59901}
+.page{display:none;padding:20px}
 .page.active{display:block}
-.tab{cursor:pointer}
-.tab.active{color:#F59901}
+.card{background:#fff;border-radius:10px;padding:16px;margin-bottom:16px;border:1px solid #eee}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kpi{font-size:22px;font-weight:600}
+small{color:#999}
 </style>
 </head>
 <body>
 
-<div class="hdr">
-  <div class="brand">raamdecoratie.com</div>
-</div>
+<div class="hdr">raamdecoratie.com dashboard</div>
 
 <div class="tab-bar">
-  <button class="tab active" onclick="showPage('ov', this)">Overzicht</button>
-  <button class="tab" onclick="showPage('adv', this)">Adviseurs</button>
-  <button class="tab" onclick="showPage('prov', this)">Provincie</button>
+  <button class="tab active" onclick="showPage('ov',this)">Overzicht</button>
+  <button class="tab" onclick="showPage('adv',this)">Adviseurs</button>
+  <button class="tab" onclick="showPage('prov',this)">Provincie</button>
 </div>
 
+<!-- OVERZICHT -->
 <div class="page active" id="page-ov">
-  <h2>Overzicht</h2>
+  <div class="grid">
+    <div class="card"><div class="kpi" id="kpi1">-</div><small>Totaal ingemeten</small></div>
+    <div class="card"><div class="kpi" id="kpi2">-</div><small>Totaal besteld</small></div>
+    <div class="card"><div class="kpi" id="kpi3">-</div><small>Conversie %</small></div>
+  </div>
+
+  <div class="card">
+    <canvas id="chartConv"></canvas>
+  </div>
 </div>
 
+<!-- ADVISEURS -->
 <div class="page" id="page-adv">
-  <h2>Adviseurs</h2>
+  <div class="card">
+    <canvas id="chartAdv"></canvas>
+  </div>
 </div>
 
+<!-- PROVINCIE -->
 <div class="page" id="page-prov">
-  <h2>Provincie</h2>
+  <div class="card">
+    <button onclick="selProv('Januari',this)">Januari</button>
+    <button onclick="selProv('Februari',this)">Februari</button>
+    <button onclick="selProv('Maart',this)">Maart</button>
+    <button onclick="selProv('April',this)">April</button>
+    <button onclick="selProv('Totaal',this)">Totaal</button>
+  </div>
 
-  <button onclick="selProv('Januari', this)">Januari</button>
-  <button onclick="selProv('Februari', this)">Februari</button>
-  <button onclick="selProv('Maart', this)">Maart</button>
-  <button onclick="selProv('April', this)">April</button>
-  <button onclick="selProv('Totaal', this)">Totaal</button>
+  <div class="card">
+    <canvas id="chartProv"></canvas>
+  </div>
 </div>
 
 <script>
-function showPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+function showPage(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
 
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
 }
 
-function selProv(maand, el) {
-  console.log('Geselecteerd:', maand);
+function selProv(maand){
+  console.log('Provincie filter:', maand);
 }
+
+// VOORBEELD DATA (hier kun jij straks je echte data in zetten)
+document.getElementById('kpi1').innerText = '1876';
+document.getElementById('kpi2').innerText = '1364';
+document.getElementById('kpi3').innerText = '72.7%';
+
+new Chart(document.getElementById('chartConv'),{
+  type:'line',
+  data:{
+    labels:['Jan','Feb','Mrt','Apr'],
+    datasets:[{label:'Conversie %',data:[76.8,72.7,76.6,65.1]}]
+  }
+});
+
+new Chart(document.getElementById('chartAdv'),{
+  type:'bar',
+  data:{
+    labels:['Cristian','Dennis','Jeffrey'],
+    datasets:[{label:'Conversie',data:[77.6,77.3,71.8]}]
+  }
+});
+
+new Chart(document.getElementById('chartProv'),{
+  type:'bar',
+  data:{
+    labels:['Overijssel','Zuid-Holland','Noord-Holland'],
+    datasets:[{label:'Conversie',data:[77.8,71.6,66.4]}]
+  }
+});
 </script>
 
 </body>
